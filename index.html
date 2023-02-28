@@ -1,1 +1,173 @@
-"Hello World" 
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <h3>Previewer <h3>
+            <label class="switch">
+              <input type="checkbox" id="dark-mode-toggle">
+              <span class="slider"></span>
+            </label>
+            <div class="col-md-10">
+              <input type="url" id="url" name="url" class="form-control">
+            </div>
+            <div class="col-md-2">
+              <button type="button" class="btn btn-success" id="btn">Submit</button>
+              <button type="reset" class="btn btn-danger" id="reset" onclick="window.location.reload();">Reset</button>
+            </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12" id="video"></div>
+        <textarea id="message" class="form-control" onclick="copyToClipboard('#message')"></textarea>
+      </div>
+    </div>
+    <style>
+      :root {
+        --bg-color: #fff;
+        --text-color: #222;
+      }
+
+      [data-theme="dark"] {
+        --bg-color: #222;
+        --text-color: #fff;
+      }
+
+      body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+        margin-right: 10px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: var(--bg-color);
+        -webkit-transition: .4s;
+        transition: .4s;
+        border-radius: 50%;
+      }
+
+      input:checked+.slider {
+        background-color: #2196F3;
+      }
+
+      input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+
+      [data-theme="dark"] .slider:before {
+        background-color: #fff;
+      }
+
+      [data-theme="dark"] input:checked+.slider {
+        background-color: #555;
+      }
+
+      [data-theme="dark"] input:checked+.slider:before {
+        background-color: #222;
+      }
+
+      [data-theme="light"] .slider:before {
+        background-color: #fff;
+      }
+
+      [data-theme="light"] input:checked+.slider {
+        background-color: #2196F3;
+      }
+
+      [data-theme="light"] input:checked+.slider:before {
+        background-color: #ccc;
+      }
+    </style>
+    <script>
+        const toggleSwitch = document.querySelector('#dark-mode-toggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        function switchTheme(event) {
+            if (event.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        toggleSwitch.addEventListener('change', switchTheme, false);
+
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+
+            if (currentTheme === 'dark') {
+                toggleSwitch.checked = true;
+            }
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+
+        $(document).ready(function() {
+            $("#btn").click(function() {
+                $("#video").empty();
+                $("#message").empty();
+                var newUrl = $("#url").val();
+                if (newUrl == '') {
+                    alert("Please Enter Valid URL");
+                    return false;
+                }
+                $("#video").append('<video controls autoplay width="auto" height="480" controls><source src="' + newUrl + '" type="video/mp4" id="video_url"></video>');
+
+                $("#message").append('Completed, Please check it and let me know. ' + newUrl);
+
+
+            });
+        });
+
+        function copyToClipboard(element) {
+            var $temp = $("<input>");
+            $("body").append($temp);
+            $temp.val($(element).text()).select();
+            document.execCommand("copy");
+            $temp.remove();
+            alert("copied to clipboard");
+        }
+    </script>
+  </body>
+</html>
