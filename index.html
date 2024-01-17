@@ -1,177 +1,244 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+
+<head>
     <title>Video Previewer</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  </head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-N7XS1ZFL9P"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-N7XS1ZFL9P');
-</script>
-  <body>
-    <div class="container">
-      <div class="row">
-        <h3>Video Previewer <h3>
-            <label class="switch">
-              <input type="checkbox" id="dark-mode-toggle">
-              <span class="slider"></span>
-            </label>
-            <div class="col-md-10">
-              <input type="url" id="url" name="url" class="form-control">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N7XS1ZFL9P"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-N7XS1ZFL9P');
+    </script>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h3>Video Previewer</h3>
             </div>
-            <div class="col-md-3">
-              <button type="button" class="btn btn-success" id="btn">Submit</button>
-              <button type="reset" class="btn btn-danger" id="reset" onclick="window.location.reload();">Reset</button>
-              <button type="button" class="btn btn-primary" id="copy" onclick="copyToClipboard('#message')">Copy</button>
+            <div class="col-md-4 text-right">
+                <label class="switch">
+                    <input type="checkbox" id="dark-mode-toggle">
+                    <span class="slider">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </span>
+                </label>
             </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12" id="video"></div>
-        <textarea id="message" class="form-control" onclick="copyToClipboard('#message')"></textarea>
-      </div>
+        </div>
+        <div class="row mb-4" style="padding-bottom: 10px;">
+            <div class="col-md-12">
+                <input type="url" id="url" name="url" class="form-control" placeholder="Enter Video URL">
+            </div>
+        </div>
+        <div class="row mb-4" style="padding-bottom: 10px;">
+            <div class="col-md-6">
+                <button type="button" class="btn btn-success" id="btn">Submit</button>
+                <button type="reset" class="btn btn-danger" id="reset" onclick="window.location.reload();">Reset</button>
+                <button type="button" class="btn btn-primary" id="copy" onclick="copyToClipboard('#message')">Copy</button>
+            </div>
+            <div class="col-md-6 text-right" style="display: none;">
+                <button type="button" class="btn btn-info" id="fullscreen">Toggle Fullscreen<span id="fullscreen-text"></span></button>
+            </div>
+        </div>
+        <div class="row mb-4" style="padding-bottom: 10px;">
+            <div class="col-md-12" id="video"></div>
+        </div>
+        <div class="row mb-4" style="padding-bottom: 10px;">
+            <div class="col-md-12">
+                <textarea id="message" class="form-control" onclick="copyToClipboard('#message')" readonly></textarea>
+            </div>
+        </div>
     </div>
     <style>
-      :root {
-        --bg-color: #fff;
-        --text-color: #222;
-      }
+        :root {
+            --bg-color: #fff;
+            --text-color: #222;
+        }
 
-      [data-theme="dark"] {
-        --bg-color: #222;
-        --text-color: #fff;
-      }
+        [data-theme="dark"] {
+            --bg-color: #222;
+            --text-color: #fff;
+        }
 
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
-      }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.5s, color 0.5s;
+        }
 
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 60px;
-        height: 34px;
-        margin-right: 10px;
-      }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+        }
 
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
 
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-        border-radius: 34px;
-      }
+        .slider {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-right: 10px;
+            background-color: #ccc;
+            /* Set default background color for light mode */
+        }
 
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 26px;
-        width: 26px;
-        left: 4px;
-        bottom: 4px;
-        background-color: var(--bg-color);
-        -webkit-transition: .4s;
-        transition: .4s;
-        border-radius: 50%;
-      }
+        [data-theme="dark"] .slider {
+            background-color: #000;
+            /* Set background color to black in dark mode */
+        }
 
-      input:checked+.slider {
-        background-color: #2196F3;
-      }
+        .slider input {
+            display: none;
+        }
 
-      input:checked+.slider:before {
-        -webkit-transform: translateX(26px);
-        -ms-transform: translateX(26px);
-        transform: translateX(26px);
-      }
+        .slider .fas {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+        }
 
-      [data-theme="dark"] .slider:before {
-        background-color: #fff;
-      }
+        .slider .fa-sun {
+            left: 4px;
+            color: #ff0;
+            /* Set sun color to yellow */
+        }
 
-      [data-theme="dark"] input:checked+.slider {
-        background-color: #555;
-      }
+        .slider .fa-moon {
+            right: 4px;
+            display: none;
+            color: #fff;
+            /* Set moon color to white */
+        }
 
-      [data-theme="dark"] input:checked+.slider:before {
-        background-color: #222;
-      }
+        input:checked+.slider .fa-sun {
+            display: none;
+        }
 
-      [data-theme="light"] .slider:before {
-        background-color: #fff;
-      }
+        input:checked+.slider .fa-moon {
+            display: block;
+        }
 
-      [data-theme="light"] input:checked+.slider {
-        background-color: #2196F3;
-      }
+        #fullscreen {
+            margin-top: 5px;
+        }
 
-      [data-theme="light"] input:checked+.slider:before {
-        background-color: #ccc;
-      }
+        [data-theme="dark"] .slider:before {
+            background-color: #fff;
+        }
+
+        [data-theme="dark"] input:checked+.slider {
+            background-color: #555;
+        }
+
+        [data-theme="dark"] input:checked+.slider:before {
+            background-color: #222;
+        }
+
+        [data-theme="light"] .slider:before {
+            background-color: #fff;
+        }
+
+        [data-theme="light"] input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        [data-theme="light"] input:checked+.slider:before {
+            background-color: #ccc;
+        }
     </style>
     <script>
-      var toastMixin = Swal.mixin({
-    toast: true,
-    icon: 'success',
-    title: 'General Title',
-    animation: false,
-    position: 'top-right',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
-  });
-        const toggleSwitch = document.querySelector('#dark-mode-toggle');
-        const currentTheme = localStorage.getItem('theme');
+        document.addEventListener('DOMContentLoaded', function () {
+            var toastMixin = Swal.mixin({
+                toast: true,
+                icon: 'success',
+                title: 'General Title',
+                animation: false,
+                position: 'top-right',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            localStorage.setItem('fullscreenPreference', false);
+            const toggleSwitch = document.querySelector('#dark-mode-toggle');
+            const currentTheme = localStorage.getItem('theme');
+            const fullscreenPreference = localStorage.getItem('fullscreenPreference');
 
-        function switchTheme(event) {
-            if (event.target.checked) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
+            function switchTheme(event) {
+                if (event.target.checked) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    localStorage.setItem('theme', 'light');
+                }
+            }
+
+            toggleSwitch.addEventListener('change', switchTheme, false);
+
+            if (currentTheme) {
+                document.documentElement.setAttribute('data-theme', currentTheme);
+
+                if (currentTheme === 'dark') {
+                    toggleSwitch.checked = true;
+                }
             } else {
                 document.documentElement.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
             }
-        }
 
-        toggleSwitch.addEventListener('change', switchTheme, false);
-
-        if (currentTheme) {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-
-            if (currentTheme === 'dark') {
-                toggleSwitch.checked = true;
+            // Set fullscreen preference to 'false' by default
+            if (!fullscreenPreference) {
+                localStorage.setItem('fullscreenPreference', 'false');
             }
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-        }
 
-        $(document).ready(function() {
-            $("#btn").click(function() {
+            function toggleFullscreenPreference() {
+                const fullscreenEnabled = fullscreenPreference === 'true';
+                // localStorage.setItem('fullscreenPreference', fullscreenEnabled ? 'false' : 'true');
+                localStorage.setItem('fullscreenPreference', false);
+                updateFullscreenButtonText();
+            }
+
+            function updateFullscreenButtonText() {
+                const fullscreenButton = document.getElementById('fullscreen');
+                const fullscreenText = document.getElementById('fullscreen-text');
+                const fullscreenEnabled = fullscreenPreference === 'true';
+
+                fullscreenText.textContent = fullscreenEnabled ? ' - Fullscreen is Enabled' : ' - Fullscreen is Disabled';
+            }
+
+            const fullscreenButton = document.getElementById('fullscreen');
+            fullscreenButton.addEventListener('click', function () {
+                toggleFullscreenPreference();
+                updateFullscreenButtonText();
+                fullscreenButton.textContent = 'Toggle Fullscreen' + (fullscreenPreference === 'true' ? ' - Fullscreen is Enabled' : '');
+            });
+
+            function submitVideo() {
                 $("#video").empty();
                 $("#message").empty();
                 var newUrl = $("#url").val();
@@ -179,26 +246,60 @@
                     alert("Please Enter Valid URL");
                     return false;
                 }
-                $("#video").append('<video controls autoplay width="auto" height="480" controls><source src="' + newUrl + '" type="video/mp4" id="video_url"></video>');
+                $("#video").append('<video controls autoplay width="100%" height="480" controls id="video_player"><source src="' + newUrl + '" type="video/mp4" id="video_url"></video>');
 
-                $("#message").append('This ticket has been completed, Please check and confirm it, and let me know if you have any queries. ' + newUrl);
+                $("#message").append('This ticket has been completed, Please check and confirm it, and let me know if you have any queries. ' + newUrl);
 
+                // Enter fullscreen mode when the video is loaded
+                var videoElement = document.getElementById("video_player");
+                const fullscreenEnabled = fullscreenPreference === 'true';
+                if (fullscreenEnabled && videoElement.requestFullscreen) {
+                    videoElement.requestFullscreen();
+                } else if (fullscreenEnabled && videoElement.mozRequestFullScreen) {
+                    videoElement.mozRequestFullScreen();
+                } else if (fullscreenEnabled && videoElement.webkitRequestFullscreen) {
+                    videoElement.webkitRequestFullscreen();
+                } else if (fullscreenEnabled && videoElement.msRequestFullscreen) {
+                    videoElement.msRequestFullscreen();
+                }
+            }
 
+            $("#btn").click(submitVideo);
+
+            // Trigger submit when Enter key is pressed
+            $("#url").keydown(function (event) {
+                if (event.keyCode === 13) { // Enter key code
+                    submitVideo();
+                }
             });
+
+            // Trigger submit when URL is pasted
+            $("#url").on("input", function () {
+                var inputUrl = $(this).val();
+                if (inputUrl && inputUrl.trim() !== "") {
+                    submitVideo();
+                }
+            });
+
+            $("#copy").click(function () {
+                copyToClipboard('#message');
+            });
+
+            updateFullscreenButtonText();
         });
 
         function copyToClipboard(element) {
-            var $temp = $("<input>");
+            var $temp = $("<textarea>");
             $("body").append($temp);
             $temp.val($(element).text()).select();
             document.execCommand("copy");
             $temp.remove();
             toastMixin.fire({
-              animation: true,
-              title: 'copied to clipboard'
+                animation: true,
+                title: 'Copied to clipboard'
             });
-            
         }
     </script>
-  </body>
+</body>
+
 </html>
