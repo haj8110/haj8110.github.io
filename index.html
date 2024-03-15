@@ -169,8 +169,7 @@
         }
     </style>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var toastMixin = Swal.mixin({
+        var toastMixin = Swal.mixin({
                 toast: true,
                 icon: 'success',
                 title: 'General Title',
@@ -184,6 +183,8 @@
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
             });
+        document.addEventListener('DOMContentLoaded', function () {
+            
             localStorage.setItem('fullscreenPreference', false);
             const toggleSwitch = document.querySelector('#dark-mode-toggle');
             const currentTheme = localStorage.getItem('theme');
