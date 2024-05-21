@@ -3,12 +3,10 @@
 
 <head>
     <title>Video Previewer</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.all.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <!-- Google tag (gtag.js) -->
@@ -20,48 +18,6 @@
         gtag('js', new Date());
         gtag('config', 'G-N7XS1ZFL9P');
     </script>
-</head>
-
-<body>
-    <div class="container mt-4">
-        <div class="row mb-4">
-            <div class="col-md-8">
-                <h3>Video Previewer</h3>
-            </div>
-            <div class="col-md-4 text-right">
-                <label class="switch">
-                    <input type="checkbox" id="dark-mode-toggle">
-                    <span class="slider">
-                        <i class="fas fa-sun"></i>
-                        <i class="fas fa-moon"></i>
-                    </span>
-                </label>
-            </div>
-        </div>
-        <div class="row mb-4" style="padding-bottom: 10px;">
-            <div class="col-md-12">
-                <input type="url" id="url" name="url" class="form-control" placeholder="Enter Video URL">
-            </div>
-        </div>
-        <div class="row mb-4" style="padding-bottom: 10px;">
-            <div class="col-md-6">
-                <button type="button" class="btn btn-success" id="btn">Submit</button>
-                <button type="reset" class="btn btn-danger" id="reset" onclick="window.location.reload();">Reset</button>
-                <button type="button" class="btn btn-primary" id="copy" onclick="copyToClipboard('#message')">Copy</button>
-            </div>
-            <div class="col-md-6 text-right" style="display: none;">
-                <button type="button" class="btn btn-info" id="fullscreen">Toggle Fullscreen<span id="fullscreen-text"></span></button>
-            </div>
-        </div>
-        <div class="row mb-4" style="padding-bottom: 10px;">
-            <div class="col-md-12" id="video"></div>
-        </div>
-        <div class="row mb-4" style="padding-bottom: 10px;">
-            <div class="col-md-12">
-                <textarea id="message" class="form-control" onclick="copyToClipboard('#message')" readonly></textarea>
-            </div>
-        </div>
-    </div>
     <style>
         :root {
             --bg-color: #fff;
@@ -69,8 +25,8 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #222;
-            --text-color: #fff;
+            --bg-color: #1a202c;
+            --text-color: #a0aec0;
         }
 
         body {
@@ -84,7 +40,6 @@
             display: inline-block;
             width: 60px;
             height: 34px;
-            margin-right: 10px;
         }
 
         .switch input {
@@ -94,22 +49,41 @@
         }
 
         .slider {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-            margin-right: 10px;
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             background-color: #ccc;
-            /* Set default background color for light mode */
+            transition: 0.4s;
         }
 
-        [data-theme="dark"] .slider {
-            background-color: #000;
-            /* Set background color to black in dark mode */
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
         }
 
-        .slider input {
-            display: none;
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
         }
 
         .slider .fas {
@@ -122,69 +96,71 @@
         .slider .fa-sun {
             left: 4px;
             color: #ff0;
-            /* Set sun color to yellow */
         }
 
         .slider .fa-moon {
             right: 4px;
             display: none;
             color: #fff;
-            /* Set moon color to white */
         }
 
-        input:checked+.slider .fa-sun {
+        input:checked + .slider .fa-sun {
             display: none;
         }
 
-        input:checked+.slider .fa-moon {
+        input:checked + .slider .fa-moon {
             display: block;
         }
-
-        #fullscreen {
-            margin-top: 5px;
-        }
-
-        [data-theme="dark"] .slider:before {
-            background-color: #fff;
-        }
-
-        [data-theme="dark"] input:checked+.slider {
-            background-color: #555;
-        }
-
-        [data-theme="dark"] input:checked+.slider:before {
-            background-color: #222;
-        }
-
-        [data-theme="light"] .slider:before {
-            background-color: #fff;
-        }
-
-        [data-theme="light"] input:checked+.slider {
-            background-color: #2196F3;
-        }
-
-        [data-theme="light"] input:checked+.slider:before {
-            background-color: #ccc;
-        }
     </style>
+</head>
+
+<body class="transition duration-500">
+    <div class="container mx-auto p-4">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-semibold">Video Previewer</h3>
+            <label class="switch">
+                <input type="checkbox" id="dark-mode-toggle">
+                <span class="slider round">
+                    <i class="fas fa-sun"></i>
+                    <i class="fas fa-moon"></i>
+                </span>
+            </label>
+        </div>
+        <div class="mb-4">
+            <input type="url" id="url" name="url" class="form-control w-full p-2 border rounded" placeholder="Enter Video URL">
+        </div>
+        <div class="flex justify-between items-center mb-4">
+            <div>
+                <button type="button" class="btn bg-green-500 text-white px-4 py-2 rounded" id="btn">Submit</button>
+                <button type="reset" class="btn bg-red-500 text-white px-4 py-2 rounded" id="reset" onclick="window.location.reload();">Reset</button>
+                <button type="button" class="btn bg-blue-500 text-white px-4 py-2 rounded" id="copy" onclick="copyToClipboard('#message')">Copy</button>
+            </div>
+            <button type="button" class="btn bg-teal-500 text-white px-4 py-2 rounded" id="fullscreen" style="display: none;">
+                Toggle Fullscreen<span id="fullscreen-text"></span>
+            </button>
+        </div>
+        <div id="video" class="mb-4"></div>
+        <div class="mb-4">
+            <textarea id="message" class="form-control w-full p-2 border rounded" onclick="copyToClipboard('#message')" readonly></textarea>
+        </div>
+    </div>
     <script>
         var toastMixin = Swal.mixin({
-                toast: true,
-                icon: 'success',
-                title: 'General Title',
-                animation: false,
-                position: 'top-right',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            });
+            toast: true,
+            icon: 'success',
+            title: 'General Title',
+            animation: false,
+            position: 'top-right',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
         document.addEventListener('DOMContentLoaded', function () {
-            
+
             localStorage.setItem('fullscreenPreference', false);
             const toggleSwitch = document.querySelector('#dark-mode-toggle');
             const currentTheme = localStorage.getItem('theme');
@@ -212,14 +188,12 @@
                 document.documentElement.setAttribute('data-theme', 'light');
             }
 
-            // Set fullscreen preference to 'false' by default
             if (!fullscreenPreference) {
                 localStorage.setItem('fullscreenPreference', 'false');
             }
 
             function toggleFullscreenPreference() {
                 const fullscreenEnabled = fullscreenPreference === 'true';
-                // localStorage.setItem('fullscreenPreference', fullscreenEnabled ? 'false' : 'true');
                 localStorage.setItem('fullscreenPreference', false);
                 updateFullscreenButtonText();
             }
@@ -247,11 +221,10 @@
                     alert("Please Enter Valid URL");
                     return false;
                 }
-                $("#video").append('<video controls autoplay width="100%" height="480" controls id="video_player"><source src="' + newUrl + '" type="video/mp4" id="video_url"></video>');
+                $("#video").append('<video controls autoplay class="w-full h-96" id="video_player"><source src="' + newUrl + '" type="video/mp4" id="video_url"></video>');
 
                 $("#message").append('This ticket has been completed, Please check and confirm it, and let me know if you have any queries. ' + newUrl);
 
-                // Enter fullscreen mode when the video is loaded
                 var videoElement = document.getElementById("video_player");
                 const fullscreenEnabled = fullscreenPreference === 'true';
                 if (fullscreenEnabled && videoElement.requestFullscreen) {
@@ -267,14 +240,12 @@
 
             $("#btn").click(submitVideo);
 
-            // Trigger submit when Enter key is pressed
             $("#url").keydown(function (event) {
-                if (event.keyCode === 13) { // Enter key code
+                if (event.keyCode === 13) {
                     submitVideo();
                 }
             });
 
-            // Trigger submit when URL is pasted
             $("#url").on("input", function () {
                 var inputUrl = $(this).val();
                 if (inputUrl && inputUrl.trim() !== "") {
@@ -292,12 +263,12 @@
         function copyToClipboard(element) {
             var $temp = $("<textarea>");
             $("body").append($temp);
-            $temp.val($(element).text()).select();
+            $temp.val($(element).val()).select();
             document.execCommand("copy");
             $temp.remove();
             toastMixin.fire({
                 animation: true,
-                title: 'Copied to clipboard'
+                title: "Copied to clipboard"
             });
         }
     </script>
