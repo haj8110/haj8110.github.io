@@ -13,7 +13,6 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-N7XS1ZFL9P"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
-
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
         gtag('config', 'G-N7XS1ZFL9P');
@@ -111,6 +110,10 @@
         input:checked + .slider .fa-moon {
             display: block;
         }
+
+        #fun_facts {
+            transition: opacity 1s ease-in-out;
+        }
     </style>
 </head>
 
@@ -143,6 +146,9 @@
         <div class="mb-4">
             <textarea id="message" class="form-control w-full p-2 border rounded" onclick="copyToClipboard('#message')" readonly></textarea>
         </div>
+        <div class="mb-4">
+            <p id="fun_facts"></p>
+        </div>
     </div>
     <script>
         var toastMixin = Swal.mixin({
@@ -159,8 +165,8 @@
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
             }
         });
-        document.addEventListener('DOMContentLoaded', function () {
 
+        document.addEventListener('DOMContentLoaded', function () {
             localStorage.setItem('fullscreenPreference', false);
             const toggleSwitch = document.querySelector('#dark-mode-toggle');
             const currentTheme = localStorage.getItem('theme');
@@ -240,35 +246,42 @@
 
             $("#btn").click(submitVideo);
 
-            $("#url").keydown(function (event) {
-                if (event.keyCode === 13) {
+            $("#url").keydown(function (e) {
+                if (e.keyCode === 13) {
+                    e.preventDefault();
                     submitVideo();
                 }
             });
 
-            $("#url").on("input", function () {
-                var inputUrl = $(this).val();
-                if (inputUrl && inputUrl.trim() !== "") {
-                    submitVideo();
-                }
-            });
+            function getFunFact() {
+                return $.getJSON("https://uselessfacts.jsph.pl/random.json?language=en");
+            }
 
-            $("#copy").click(function () {
-                copyToClipboard('#message');
-            });
+            function updateFunFact() {
+                getFunFact().done(function (data) {
+                    var funFactElement = document.getElementById("fun_facts");
+                    funFactElement.style.opacity = 0;
+                    setTimeout(function () {
+                        funFactElement.textContent = data.text;
+                        funFactElement.style.opacity = 1;
+                    }, 1000);
+                });
+            }
 
-            updateFullscreenButtonText();
+            updateFunFact();
+            setInterval(updateFunFact, 10000);
         });
 
         function copyToClipboard(element) {
-            var $temp = $("<textarea>");
+            var $temp = $("<input>");
             $("body").append($temp);
             $temp.val($(element).val()).select();
             document.execCommand("copy");
             $temp.remove();
+
             toastMixin.fire({
                 animation: true,
-                title: "Copied to clipboard"
+                title: 'Copied to clipboard'
             });
         }
     </script>
