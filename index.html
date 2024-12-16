@@ -260,7 +260,52 @@
         [data-theme="dark"] .button-fullscreen {
             background-color: var(--button-bg-fullscreen-dark);
         }
+        .weather-container {
+        background: #eaeaea;
+        padding: 10px;
+        border-radius: 10px;
+        margin-top: 20px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 10%;
+    }
 
+    .weather-container h1 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    }
+
+    .weather-container .city-name {
+        font-size: 14px;
+        color: #444;
+        margin-bottom: 10px;
+    }
+
+    .weather-container .temperature {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ff5733;
+    }
+
+    .weather-container .condition {
+        font-size: 14px;
+        color: #888;
+    }
+
+    .weather-container .rain-info {
+        font-size: 13px;
+        color: #28a745;
+    }
+
+    .weather-container .rain-info.no-rain {
+        color: #17a2b8; /* Color for 'No rain' text */
+    }
+
+    .weather-container .error-message {
+        font-size: 13px;
+        color: #dc3545;
+    }
     </style>
 </head>
 
@@ -294,6 +339,14 @@
         </div>
 
         <div class="fun-facts" id="fun_facts"></div>
+        <div class="weather-container">
+        <h1>Weather</h1>
+        <div class="city-name" id="city-name">Chennai</div>
+        <div class="temperature" id="temperature">Loading...</div>
+        <div class="condition" id="condition">Please wait...</div>
+        <div class="rain-info" id="rain-info">Checking rain...</div>
+        <div id="error-message" class="error-message"></div>
+        </div>
 
         <button type="button" class="button button-fullscreen" id="fullscreen" style="display: none;">
             Toggle Fullscreen
@@ -385,6 +438,55 @@
                 title: 'Copied to clipboard'
             });
         }
+        // Replace with your actual API key from WeatherAPI
+    const apiKey = '101fe980650e4f9882172758241212';
+    const city = 'Chennai';  // Use 'Chennai' for the city name
+    const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+
+    // Function to fetch weather data
+    async function getWeather() {
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+
+            // Check if the response contains the necessary data
+            if (data && data.current) {
+                const temperature = data.current.temp_c;  // Current temperature in Celsius
+                const condition = data.current.condition.text;  // Weather condition (e.g., 'Sunny', 'Rain')
+                const rain = data.current.precip_mm;  // Rainfall in mm
+                const cityName = data.location.name;  // City name
+
+                // Set the weather data to the HTML elements
+                document.getElementById('city-name').textContent = cityName;
+                document.getElementById('temperature').textContent = `${temperature}°C`;
+                document.getElementById('condition').textContent = condition;
+                
+                // Handle rain information
+                if (rain > 0) {
+                    document.getElementById('rain-info').textContent = `Rainfall: ${rain} mm`;
+                    document.getElementById('rain-info').classList.remove('no-rain');
+                } else {
+                    document.getElementById('rain-info').textContent = 'No rain today';
+                    document.getElementById('rain-info').classList.add('no-rain');
+                }
+                
+                document.getElementById('error-message').textContent = '';
+            } else {
+                throw new Error('Unable to fetch weather data.');
+            }
+        } catch (error) {
+            console.error("Error fetching weather data:", error);
+            document.getElementById('error-message').textContent = "Error retrieving weather data.";
+            document.getElementById('rain-info').textContent = '';
+            document.getElementById('temperature').textContent = '';
+            document.getElementById('condition').textContent = '';
+        }
+    }
+
+    // Call the function to get the weather when the page loads
+    window.onload = function() {
+        getWeather();
+    };  
     </script>
 </body>
 
